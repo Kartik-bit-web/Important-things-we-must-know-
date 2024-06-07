@@ -19,9 +19,8 @@ const App = () => {
     });
 
     socket.on('message', (message) => {
-      let clientOffset = socket.id
-      console.log(clientOffset)
-      console.log('Message from server:', message, clientOffset);
+      
+      console.log('Message from server:', message);
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
@@ -37,7 +36,8 @@ const App = () => {
 
   const sendMessage = () => {
     if (socket && input) {
-      socket.emit('message', input);
+      let clientOffset = socket.id
+      socket.emit('message', input, clientOffset);
       setInput('');
     }
   };

@@ -1,12 +1,13 @@
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from "socket.io";
+import {availableParallelism} from 'os'
 
 import cors from 'cors';
 
 // Create an Express application
 const app = express();
-app.use(cors())
+// app.use(cors())
 
 const server = createServer(app);
 const io = new Server(server, {
@@ -25,19 +26,19 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  // io.emit('message', `Hello: ${socket.id}`)
   console.log(`Client Connected`);
+
 
   socket.on('message', (message, clientOffset) => {
 
     console.log(`Client Sent the message: ${message}: id => ${clientOffset}`)
 
-    io.emit('message', `${message}`)
+    io.emit('message', `${clientOffset} : ${message}`)
 
   })
 
   socket.on('disconnect', () => {
-    console.log(`Client Disconnected: ${socket.id}`);
+    console.log(`Client Disconnected`);
   });
 
 });
