@@ -9,7 +9,12 @@ const App = () => {
 
   useEffect(() => {
     // Create a socket connection
-    const socket = io('http://127.0.0.1:3000');
+    const socket = io('http://127.0.0.1:3000', {
+      extraHeaders: {
+        'x-auth-token': 'your-auth-token',
+        'x-custom-header': 'custom-value'
+      }
+    });
     setSocket(socket);
 
     // Listen for messages from the server

@@ -13,9 +13,9 @@ const io = new Server(server, {
   },
   cors: {
     origin: "http://localhost:5173", // Adjust this to the origin of your client
-    methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
-    credentials: true
+    // methods: ["GET", "POST"],
+    // allowedHeaders: ["my-custom-header"],
+    // credentials: true
   }
 });
 
@@ -24,11 +24,13 @@ let connectedUsers = {};
 
 // Serve a basic HTTP response
 app.all('/', (req, res) => {
+  // console.log("HTTP", req.headers)
   res.status(200).json({"data": "success"})
 });
 
 io.on('connection', (socket) => {
   console.log(`Client Connected`);
+  console.log(socket.handshake.headers);
 
   socket.on('join-room', (data) => {
     socket.join(data.room);
