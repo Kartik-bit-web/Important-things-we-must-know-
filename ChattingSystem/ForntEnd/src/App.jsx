@@ -5,7 +5,6 @@ import { io } from 'socket.io-client';
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [disconnected, setdisconnected] = useState('connect')
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
@@ -16,12 +15,14 @@ const App = () => {
     // Listen for messages from the server
     socket.on('connect', () => {
       console.log('Connected to WebSocket server');
+      let name = prompt("Enter Your name");
+      let room = prompt("Enter the room");
+      socket.emit('join-room', {room, name:name});
     });
 
-    socket.on('message', (message) => {
-      
-      console.log('Message from server:', message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+    socket.on('message', (data) => {
+      console.log('Message from server:', data);
+      setMessages((prevMessages) => [...prevMessages, data]);
     });
 
     socket.on('disconnect', () => {
@@ -36,29 +37,16 @@ const App = () => {
 
   const sendMessage = () => {
     if (socket && input) {
-      let clientOffset = socket.id
-      socket.emit('message', input, clientOffset);
+      // let clientOffset = socket.id
+      socket.emit('message', input);
       setInput('');
-    }
-  };
-
-  const disconnect = () => {
-    if (socket && disconnected) {
-      if(socket.connected){
-        socket.disconnect();
-        setdisconnected('disconnect')
-      }else{
-        socket.connect();
-        setdisconnected('connect');
-      }
-      
-      
     }
   };
 
   return (
     <div>
       <h1>WebSocket Client</h1>
+
       <input
         type="text"
         value={input}
@@ -66,7 +54,6 @@ const App = () => {
         placeholder="Type a message..."
       />
       <button onClick={sendMessage}>Send</button>
-      <button onClick={disconnect}>{disconnected}</button>
       <div>
         <h2>Messages</h2>
         <ul>
